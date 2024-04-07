@@ -21,22 +21,17 @@ export default {
       async authorize(credentials) {
         const validatedFields = LoginSchema.safeParse(credentials);
 
-        if (validatedFields.success) {
-          const { email, password } = validatedFields.data;
-          
-          const user = await getUserByEmail(email);
-          if (!user || !user.password) return null;
+        if (!validatedFields.success) return null;
 
-          const passwordsMatch = await bcrypt.compare(
-            password,
-            user.password,
-          );
+        const { email, password } = validatedFields.data;
+        const user = await getUserByEmail(email);
 
-          if (passwordsMatch) return user;
-        }
+        if (!user || !user.password) return null;
 
-        return null;
-      }
-    })
+        const passwordsMatch = await bcrypt.compare(password, user.password);
+
+        return passwordsMatch ? user : null;
+      },
+    }),
   ],
 } satisfies NextAuthConfig
