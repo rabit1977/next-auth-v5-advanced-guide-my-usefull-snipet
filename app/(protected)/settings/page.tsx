@@ -61,6 +61,11 @@ const SettingsPage = () => {
     startTransition(() => {
       settings(values)
         .then((data) => {
+          if (data === false) {
+            setError('Unauthorized');
+            return;
+          }
+
           if (data.error) {
             setError(data.error);
           }
